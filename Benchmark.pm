@@ -15,13 +15,21 @@ sub get_measure {
                );
     
     # type checking 
-    if (ref $args{candidate} ne 'ARRAY' && ref $args{answerset} ne 'ARRAY') {
-        carp "Error: given data are not ARRAY";
+    if (ref $args{candidate} ne 'ARRAY' && ref $args{answerset} ne 'ARRAY' && ref $args{flag} ne 'HASH') {
+        croak "Error: given data are not ARRAY";
     }
+    
     # flag checking
-    if (!$args{flag} eq 'precision' || !$args{flag} eq 'recall' || !$args{flag} eq 'all') {
-        carp "Error: given a flag is not accepted";
+    if (!defined $args{flag}) {
+        croak "Error: Setting 'flag' param to get_measure() is required";
     }
+    elsif (!defined $args{candidate}) {
+        croak "Error: Setting 'candidate' param to get_measure() is required";
+    }
+    elsif (!defined $args{answerset}) {
+        croak "Error: Setting 'answerset' param to get_measure() is required";
+    }
+    
     # NA checking
     my $ans_data_count       = scalar @{ $args{answerset} };
     my $candidate_data_count = scalar @{ $args{candidate} };
@@ -43,8 +51,9 @@ sub get_measure {
             my $p = _formated($intersection/$ans_data_count);
             return "$r, $p";
         } else {
-            return;
-        }
+            croak "Error: given argument is not acceptable";}
+    }else {
+        croak "Error: given data is containing zero";
     }
 }
 
