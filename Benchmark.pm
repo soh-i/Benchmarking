@@ -32,15 +32,15 @@ sub get_measure {
         
         if ($args{flag} eq 'precision') {
             my $recall = $intersection/$candidate_data_count;
-            return sprintf "%2.4f", $recall;
+            return _formated($recall);
         }
         elsif ($args{flag} eq 'recall') {
             my $precision = $intersection/$ans_data_count;
-            return sprintf "%2.4f", $precision;
+            return _formated($precision);
         }
         elsif ($args{flag} eq 'all') {
-            my $r = $intersection/$candidate_data_count;
-            my $p = $intersection/$ans_data_count;
+            my $r = _formated($intersection/$candidate_data_count);
+            my $p = _formated($intersection/$ans_data_count);
             return "$r, $p";
         } else {
             return;
@@ -48,60 +48,10 @@ sub get_measure {
     }
 }
 
-1;
-
-__END__
-
-sub calc_recall {
-    my %args = (
-                candidate => undef,
-                answerset => undef,
-                @_,
-               );
-    
-    # type checking 
-    if (ref $args{candidate} ne 'ARRAY' && ref $args{answerset} ne 'ARRAY') {
-        die "Error: given data are not ARRAY";
-    }
-    
-    # NA checking
-    my $ans_data_count       = scalar @{ $args{answerset} };
-    my $candidate_data_count = scalar @{ $args{candidate} };
-    
-    if ($candidate_data_count != 0 && $ans_data_count != 0) {
-        my $lc = List::Compare->new($args{candidate}, $args{answerset});
-        my $intersection = $lc->get_intersection();
-        return sprintf "%2.4f", ($intersection / $ans_data_count);
-        
-    }
-    else {
-        carp "Error: given data are containing NA";
-        return;
-    }
+sub _formated {
+    my $p = shift;
+    return sprintf "%2.4f", $p;
 }
 
-sub calc_precision {
-    my %args = (
-                candidate => undef,
-                answerset => undef,
-                @_,
-               );
-    
-    # type checking 
-    if (ref $args{candidate} ne 'ARRAY' && ref $args{answerset} ne 'ARRAY') {
-        die "Error: given data are not ARRAY";
-    }
-    
-    # NA checking
-    my $ans_data_count       = scalar @{ $args{answerset} };
-    my $candidate_data_count = scalar @{ $args{candidate} };
-        
-    if ($ans_data_count != 0 && $candidate_data_count != 0) {
-        my $lc = List::Compare->new($args{candidate}, $args{answerset});
-        my $intersection = $lc->get_intersection();
-        return sprintf "%2.4f", ($intersection / $candidate_data_count);
-    }
-}
-
-
 1;
+
