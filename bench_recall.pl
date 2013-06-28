@@ -30,7 +30,7 @@ if ($help) {
     exit;
 }
 if (!$opts{answer_dir} || !$opts{predicted_dir}) {
-    print "Require the answer set and/or predicted set";
+    print "!!! Require the answer set and/or predicted set !!!\n";
     die _usage();
 }
 
@@ -90,20 +90,18 @@ sub collect_data {
         my ($chr, $pos);
         if ($args{sep} eq 'tab') {
             ($chr, $pos)  = (split /\t/, $data_entory)[0,1];
-            if ($chr =~ /chr/) {
-                $chr =~ s/chr//g;
-            }
+            $chr =~ s/^chr//g if $chr =~ m/^chr/; # Remove 'chr' prefix
+            $pos =~ s/\,//g   if $pos =~ m/\,/;   # Remove comma. e.g. 123,456
             push $collected, "$chr:$pos";
         }
         elsif ($args{sep} eq 'comma') {
-            my ($chr, $pos)  = (split /\,/, $data_entory)[0,1];
-            if ($chr =~ /chr/) {
-                $chr =~ s/chr//g;
-            }
+            ($chr, $pos)  = (split /\,/, $data_entory)[0,1];
+            $chr =~ s/^chr//g if $chr =~ /^chr/;
+            $pos =~ s/\,//g if $pos =~ m/\,/;
             push $collected, "$chr:$pos";
         }
         else {
-            croak "Error: given split() separetor, 'tab' or 'comma' is accepted";
+            croak "Error: given split() separetor, 'tab' or 'comma' is only accepted";
         }
     }
     return $collected;
@@ -111,12 +109,16 @@ sub collect_data {
 
 sub _usage {
     return <<EOF;
-    Usage:
-    perl $0 --answer_dir ./answer_dir/ --predicted ./pred_dir/
+$0:
+Benchmarking test for the RNA editing sites detection methods based on RNA-seq data,
+using precision and recall.
+
+Usage:
+    perl $0 --answer_dir ./DARNED_DIR --predicted ./EditingSite_collection/
+    --answer_dir    [required]
+    --predicted_dir [required]
 
 Options:
-    --answer [required]
-    --predicted [required]
     --help Show help message
 
 EOF
