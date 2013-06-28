@@ -4,7 +4,12 @@ use strict;
 use warnings;
 use Spreadsheet::ParseExcel;
 
-my $input = shift or die;
+if (scalar @ARGV != 2) {
+    die "perl $0 <excel.xls> <SheetName>";
+}
+
+my $input      = shift;
+my $sheet_name = shift;
 
 my $parser   = Spreadsheet::ParseExcel->new();
 my $workbook = $parser->parse($input);
@@ -13,7 +18,7 @@ if (!defined $workbook) {
     die $parser->error();
 }
 
-my $sheet_name = 'PooledSamplesAlu';
+#my $sheet_name = 'PooledSamplesAlu';
 #my $sheet_name = 'PooledSamplesRepetitiveNonAlu';
 #my $sheet_name = 'PooledSamplesNon-Repetitive';
 
