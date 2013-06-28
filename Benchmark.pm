@@ -8,14 +8,14 @@ use Data::Dumper;
 
 sub get_measure {
     my %args = (
-                candidate => undef,
+                predicted => undef,
                 answerset => undef,
                 flag      => undef,
                 @_,
                );
     
     # type checking 
-    if (ref $args{candidate} ne 'ARRAY' && ref $args{answerset} ne 'ARRAY' && ref $args{flag} ne 'HASH') {
+    if (ref $args{predicted} ne 'ARRAY' && ref $args{answerset} ne 'ARRAY' && ref $args{flag} ne 'HASH') {
         croak "Error: given data are not ARRAY";
     }
     
@@ -23,8 +23,8 @@ sub get_measure {
     if (!defined $args{flag}) {
         croak "Error: Setting 'flag' param to get_measure() is required";
     }
-    elsif (!defined $args{candidate}) {
-        croak "Error: Setting 'candidate' param to get_measure() is required";
+    elsif (!defined $args{predicted}) {
+        croak "Error: Setting 'predicted' param to get_measure() is required";
     }
     elsif (!defined $args{answerset}) {
         croak "Error: Setting 'answerset' param to get_measure() is required";
@@ -32,27 +32,28 @@ sub get_measure {
     
     # NA checking
     my $ans_data_count       = scalar @{ $args{answerset} };
-    my $candidate_data_count = scalar @{ $args{candidate} };
+    my $predicted_data_count = scalar @{ $args{predicted} };
         
-    if ($ans_data_count != 0 && $candidate_data_count != 0) {
-        my $lc = List::Compare->new($args{candidate}, $args{answerset});
+    if ($ans_data_count != 0 && $predicted_data_count != 0) {
+        my $lc = List::Compare->new($args{predicted}, $args{answerset});
         my $intersection = $lc->get_intersection();
         
-        if ($args{flag} eq 'precision') {
-            my $recall = $intersection/$candidate_data_count;
+        if ($args{flag} eq 'recall') {
+            my $recall = $intersection/$ans_data_count;
             return _formated($recall);
         }
-        elsif ($args{flag} eq 'recall') {
-            my $precision = $intersection/$ans_data_count;
+        elsif ($args{flag} eq 'precision') {
+            my $precision = $intersection/$predicted_data_count;
             return _formated($precision);
         }
         elsif ($args{flag} eq 'all') {
-            my $r = _formated($intersection/$candidate_data_count);
-            my $p = _formated($intersection/$ans_data_count);
-            return "$r, $p";
+            my $recall    = _formated($intersection/$ans_data_count);
+            my $precision = _formated($intersection/$predicted_data_count);
+            my $res = "$recall\t$precision";
+            return $res;
         } else {
             croak "Error: given argument is not acceptable";}
-    }else {
+    } else {
         croak "Error: given data is containing zero";
     }
 }
