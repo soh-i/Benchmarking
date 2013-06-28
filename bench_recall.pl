@@ -6,6 +6,7 @@ use Carp;
 use IO::File;
 use IO::Dir;
 use Cwd;
+use File::Basename qw/fileparse basename/;
 use List::Compare;
 use Getopt::Long;
 use Data::Dumper;
@@ -14,6 +15,7 @@ use Data::Dumper;
 use lib qw{/home/soh.i/benchmark/lib};
 use Benchmark;
 
+# Parsing args
 my %opts = ();
 my $help = undef;
 GetOptions(
@@ -22,6 +24,7 @@ GetOptions(
            'answer_dir=s',
            'predicted_dir=s',
           ) or die _usage();
+
 if ($help) {
     print _usage();
     exit;
@@ -31,32 +34,45 @@ if (!$opts{answer_dir} || !$opts{predicted_dir}) {
     die _usage();
 }
 
+# Collect answer data set from given dir
 my $adh = IO::Dir->new($opts{answer_dir}) or die $!;
-
-my $collected_answer;
+my @ans_files = ();
 while (my $ans_file = $adh->read()){
     next unless $ans_file =~ m/\.txt/;
-
-    # Retrive absolute path of answer directory
     my $abs_ans_path = Cwd::abs_path($opts{answer_dir})."/$ans_file";
-    $collected_answer = collect_data(file => $abs_ans_path, sep => 'tab');
+    push @ans_files, $abs_ans_path;
 }
 $adh->close();
 
-my $pdh = IO::Dir->new($opts{predicted_dir}) or die $!;
-while (my $pred_file = $pdh->read()){
-    next unless $pred_file =~ m/\.csv$/;
-    my $abs_pred_path = Cwd::abs_path($opts{predicted_dir})."/$pred_file";
-    my $collected_predict = collect_data(file => $abs_pred_path, sep => 'comma');
-    my $result = Benchmark::get_measure(
-                                        flag => 'all',
-                                        predicted => $collected_predict,
-                                        answerset => $collected_answer
-                                       );
-    print $pred_file, "\t";
-    print $result, "\n";
+# Make a header line
+my $header = "Recall\tPrecision\tLabel\tAnswerSet\n";
+print STDOUT $header;
+
+# Roop num. of ans files * num. of predicted files
+for my $ansfile (@ans_files) {
+    
+    # collection of answer data
+    my $collected_answer = collect_data(file => $ansfile, sep => 'tab');
+    my $pdh = IO::Dir->new($opts{predicted_dir}) or die $!;
+    
+    # collection of predicted data
+    while (my $pred_file = $pdh->read()){
+        next unless $pred_file =~ m/\.csv$/;
+        my $abs_pred_path = Cwd::abs_path($opts{predicted_dir})."/$pred_file";
+        my $collected_predict = collect_data(file => $abs_pred_path, sep => 'comma');
+        
+        # Calculate for the metrics
+        my $result = Benchmark::get_measure(
+                                            flag => 'all',
+                                            predicted => $collected_predict,
+                                            answerset => $collected_answer
+                                           );
+        print $result, "\t";
+        print basename($pred_file, '.csv'), "\t";
+        print basename($ansfile, '.txt'), "\n";
+    }
+    $pdh->close();
 }
-$pdh->close();
 
 sub collect_data {
     my %args = (
@@ -64,8 +80,8 @@ sub collect_data {
                 sep  => undef,
                 @_,
                );
+    
     my $bfh = IO::File->new( $args{file} ) or croak "Cant open file:$!";
-
     my $collected = [];
     while (my $data_entory = $bfh->getline) {
         next if $. == 1;
