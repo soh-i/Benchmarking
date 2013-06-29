@@ -12,7 +12,7 @@ use Getopt::Long;
 use Data::Dumper;
 
 # My modules
-use lib qw{/home/soh.i/benchmark/lib};
+use lib qw{/home/soh.i/benchmark/src/lib};
 use Benchmark;
 
 # Parsing args
