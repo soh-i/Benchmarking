@@ -58,6 +58,7 @@ sub get_measure {
     }
 }
 
+
 sub _formated {
     my $p = shift;
     return sprintf "%2.4f", $p;
