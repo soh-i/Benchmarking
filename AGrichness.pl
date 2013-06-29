@@ -28,7 +28,7 @@ sub _count_data {
     my $io = IO::File->new($file, 'r') or croak "Error: Cant read file:$!";
     my $entory_count = 0;
     while (my $line = $io->getline()) {
-        next if $. == 1;
+        next if __LINE__ == 1;
         $entory_count++;
     }
     $io->close();
