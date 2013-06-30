@@ -7,7 +7,8 @@ use Spreadsheet::ParseExcel;
 if (scalar @ARGV != 2) {
     print STDERR "This script is used for converting xls (excel) to csv.\n";
     print STDERR "Usage:\n";
-    die "       perl $0 <excel.xls> <SheetName>";
+    print "       perl $0 <excel.xls> <SheetName>\n";
+    exit;
 }
 
 my $input      = shift;
