@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use 5.010;
 use Carp;
+use File::Basename;
 use IO::File;
-use IO::Dir;
 
 if (scalar @ARGV != 2) {
     die "perl $0 <AG_file> <nonAG_file>\n";
@@ -18,9 +18,9 @@ my $nonAG_file = shift;
 my $AG_count    = _count_data($AG_file);
 my $nonAG_count = _count_data($nonAG_file);
 
-say $AG_count;
-say $nonAG_count;
-say _AG_richness(AG => $AG_count, nonAG => $nonAG_count);
+printf "%2.5f\t", _AG_richness(AG => $AG_count, nonAG => $nonAG_count);
+printf "%2.5f\t", 1-_AG_richness(AG => $AG_count, nonAG => $nonAG_count);
+print basename $AG_file."\n";
 
 sub _count_data {
     my $file = shift;
