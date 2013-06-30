@@ -46,6 +46,6 @@ sub _AG_richness {
         my $richness = $args{AG} / ($args{AG} + $args{nonAG});
         return scalar $richness;
     } else { 
-        croak "Error: AG and/or nonAG is empty";
+        croak "Error: AG and/or nonAG file(s) is empty";
     }
 }
