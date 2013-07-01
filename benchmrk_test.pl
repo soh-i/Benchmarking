@@ -89,7 +89,9 @@ sub collect_data {
     my $bfh = IO::File->new($args{file}) or croak "Cant open file:$!";
     my $collected = [];
     while (my $data_entory = $bfh->getline) {
+        # Skip the header if its exists
         next if __LINE__ == 1;
+        next if $data_entory =~ m/^#/;
 
         # Split properly
         if ($args{sep} eq 'tab') {
