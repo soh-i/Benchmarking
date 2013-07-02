@@ -16,26 +16,35 @@ GetOptions(
            \%args,
            'excel=s',
            'sheet=s',
-           'man|help'=>\$help,
+           'man|help' => \$help,
           ) or die pod2usage(1);
 
 pod2usage(1) if $help;
-pod2usage(-verbose=>2, exitstatus=>0, output=>\*STDERR) unless $args{excel} || $args{sheet};
+pod2usage(
+          -verbose => 2,
+          -output  => \*STDERR
+         ) unless $args{excel} || $args{sheet};
 
 if (_getSuffix($args{excel}) eq ".xls") {
     my $file = File::Spec->rel2abs($args{excel});
     
     if (-e $file) {
-        print _XLS(file=>$file, sheet=>$args{sheet});
+        print _XLS(
+                   file  => $file,
+                   sheet => $args{sheet}
+                  );
     } else {
-        die "Error: can not find file";
+        die "Error: Can not find file";
     }
 }
 elsif (_getSuffix($args{excel}) eq ".xlsx") {
-    my $file = File::Spec->rel2abs($args{excel});
+    my $file = File::Spec->rel2abs($args{excel}); 
     
     if (-e $file) {
-        print _XLSX(file=>$file, sheet=>$args{sheet});
+        print _XLSX(
+                    file  => $file,
+                    sheet => $args{sheet}
+                   );
     } else { 
         die "Error: Can not find file";
     }
@@ -43,8 +52,8 @@ elsif (_getSuffix($args{excel}) eq ".xlsx") {
 
 sub _XLS {
     my %opts = (
-                file   => undef,
-                sheet  => undef,
+                file  => undef,
+                sheet => undef,
                 @_,
                );
     
@@ -77,8 +86,8 @@ sub _XLS {
 
 sub _XLSX {
     my %opts = (
-                file   => undef,
-                sheet  => undef,
+                file  => undef,
+                sheet => undef,
                 @_,
                );
     
