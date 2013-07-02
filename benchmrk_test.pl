@@ -50,7 +50,7 @@ while (my $ans_file = $adh->read()){
 $adh->close();
 
 # Make a header line
-my $header = "Recall\tPrecision\tLabel\tAnswerSet\n";
+my $header = "Recall\tPrecision\tLabel\tAnswerSet\tDataCount\n";
 print STDOUT $header;
 
 # Roop num. of ans files * num. of predicted files
@@ -74,7 +74,8 @@ for my $ansfile (@ans_files) {
                                            );
         print $result, "\t";
         print basename($pred_file, '.csv'), "\t";
-        print basename($ansfile, '.txt'), "\n";
+        print basename($ansfile, '.txt'), "\t";
+        print scalar @{$collected_predict}, "\n";
     }
     $pdh->close();
 }
