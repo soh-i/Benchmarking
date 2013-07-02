@@ -93,6 +93,7 @@ sub collect_data {
         # Skip the header if its exists
         next if __LINE__ == 1;
         next if $data_entory =~ m/^#/;
+        next if $data_entory =~ m/^track/;
 
         # Split properly
         if ($args{sep} eq 'tab') {
