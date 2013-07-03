@@ -6,7 +6,7 @@ use Carp;
 use Getopt::Long;
 use Pod::Usage;
 use File::Basename qw/fileparse/;
-use File::Spec;
+use File::Spec qw/rel2abs/;
 use Spreadsheet::ParseExcel;
 use Spreadsheet::XLSX;
 
@@ -23,7 +23,7 @@ pod2usage(1) if $help;
 pod2usage(
           -verbose => 2,
           -output  => \*STDERR
-         ) unless $args{excel} || $args{sheet};
+         ) unless defined $args{excel} || defined $args{sheet};
 
 if (_getSuffix($args{excel}) eq ".xls") {
     my $file = File::Spec->rel2abs($args{excel});
@@ -34,7 +34,7 @@ if (_getSuffix($args{excel}) eq ".xls") {
                    sheet => $args{sheet}
                   );
     } else {
-        die "Error: Can not find file";
+        die "Error: Can not find file:$!";
     }
 }
 elsif (_getSuffix($args{excel}) eq ".xlsx") {
@@ -46,7 +46,7 @@ elsif (_getSuffix($args{excel}) eq ".xlsx") {
                     sheet => $args{sheet}
                    );
     } else { 
-        die "Error: Can not find file";
+        die "Error: Can not find file:$!";
     }
 }
 
