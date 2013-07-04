@@ -39,16 +39,16 @@ package Benchmark {
             my $intersection = $lc->get_intersection();
             
             if ($args{flag} eq 'precision') {
-                my $recall = $intersection/$ans_data_count;
+                my $recall = $intersection/$predicted_data_count;
                 return main::_formated($recall);
             }
             elsif ($args{flag} eq 'recall') {
-                my $precision = $intersection/$predicted_data_count;
+                my $precision = $intersection/$ans_data_count;
                 return main::_formated($precision);
             }
             elsif ($args{flag} eq 'all') {
-                my $precision = main::_formated($intersection/$ans_data_count);
-                my $recall    = main::_formated($intersection/$predicted_data_count);
+                my $precision = main::_formated($intersection/$predicted_data_count);
+                my $recall    = main::_formated($intersection/$ans_data_count);
                 my $res = "$recall\t$precision";
                 return $res;
             } else {
