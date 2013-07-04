@@ -40,7 +40,7 @@ Readonly my $ANSDATA_SUFFIX        => '.csv'; # eg. hg19.csv
 Readonly my $PREDICTED_DATA_SUFFIX => '.csv'; # eg. excel.csv
 
 # Collect answer data set from given dir
-my $adh = IO::Dir->new($opts{answer_dir}) or die $!;
+my $adh = IO::Dir->new($opts{answer_dir}) or die "Error: Can not find file:$!";
 my @ans_files = ();
 while (my $ans_file = $adh->read()){
     next unless $ans_file =~ m/$ANSDATA_SUFFIX$/;
