@@ -57,7 +57,7 @@ print STDOUT $header;
 for my $ansfile (@ans_files) {
     
     # collection of answer data
-    my $collected_answer = collect_data(file => $ansfile, sep => 'comma');
+    my $collected_answer = collect_data(file => $ansfile);
     
     my $pdh = IO::Dir->new($opts{predicted_dir}) or die $!;
     
@@ -65,7 +65,7 @@ for my $ansfile (@ans_files) {
     while (my $pred_file = $pdh->read()){
         next unless $pred_file =~ m/$PREDICTED_DATA_SUFFIX$/;
         my $abs_pred_path = Cwd::abs_path($opts{predicted_dir})."/$pred_file";
-        my $collected_predict = collect_data(file => $abs_pred_path, sep => 'comma');
+        my $collected_predict = collect_data(file => $abs_pred_path);
         
         # Calculate for the metrics
         my $result = Benchmark::get_measure(
@@ -75,7 +75,7 @@ for my $ansfile (@ans_files) {
                                            );
         print $result, "\t";
         print basename($pred_file, '.csv'), "\t";
-        print basename($ansfile, '.txt'), "\t";
+        print basename($ansfile, '.csv'), "\t";
         print scalar @{$collected_answer}, "\t";
         print scalar @{$collected_predict}, "\n";
     }
@@ -85,7 +85,6 @@ for my $ansfile (@ans_files) {
 sub collect_data {
     my %args = (
                 file => undef,
-                sep  => undef,
                 @_,
                );
     
@@ -99,21 +98,12 @@ sub collect_data {
         next if $data_entory =~ m/^track/;
 
         # Split properly
-        if ($args{sep} eq 'tab') {
-            my ($chr, $pos)  = (split /\t+/, $data_entory)[0,1];
-            $chr =~ s/^chr// if $chr =~ m/^chr/; # Remove 'chr' prefix
-            $pos =~ s/\,//g  if $pos =~ m/\,/;   # Remove comma. e.g. 123,456
-            push $collected, "$chr:$pos";
-        }
-        elsif ($args{sep} eq 'comma') {
-            my ($chr, $pos)  = (split /\,/, $data_entory)[0,1];
-            $chr =~ s/^chr// if $chr =~ m/^chr/;
-            $pos =~ s/\,//g  if $pos =~ m/\,/;  
-            push $collected, "$chr:$pos";
-        }
-        else {
-            croak "Internal error: given split() separetor, 'tab' or 'comma' is only accepted";
-        }
+        my ($chr, $pos)  = (split /\,/, $data_entory)[0,1];
+        
+        $chr =~ s/^chr// if $chr =~ m/^chr/;
+        $pos =~ s/\,//g  if $pos =~ m/\,/;  
+        push $collected, "$chr:$pos";
+        
     }
     return $collected;
 }
