@@ -97,7 +97,7 @@ sub collect_data {
 
         # Split properly
         if ($args{sep} eq 'tab') {
-            my ($chr, $pos)  = (split /\t/, $data_entory)[0,1];
+            my ($chr, $pos)  = (split /\t/, $data_entory)[0, 1];
             $chr =~ s/^chr// if $chr =~ m/^chr/; # Remove 'chr' prefix
             $pos =~ s/\,//g  if $pos =~ m/\,/;   # Remove comma. e.g. 123,456
             push $collected, "$chr:$pos";
