@@ -6,7 +6,8 @@ use Data::Dumper;
 use Math::Random::MT;
 use IO::File;
 
-my $file = shift or die;
+my $file = shift or die "perl $0 data.csv Num. of sampling";
+my $N    = shift || 1000; # Set sampling count, default value is 1000
 
 my $fh = IO::File->new($file) or die;
 my $selected = [];
@@ -18,9 +19,6 @@ while (my $line = $fh->getline()) {
     $count++;
 }
 
-for (my $i=0; $i<1000; $i++) {
+for (my $i=0; $i<$N; $i++) {
     print $selected->[ int(Math::Random::MT::rand($count)) ], "\n";
 }
-
-
-
