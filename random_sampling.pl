@@ -22,3 +22,12 @@ while (my $line = $fh->getline()) {
 for (my $i=0; $i<$N; $i++) {
     print $selected->[ int(Math::Random::MT::rand($count)) ], "\n";
 }
+
+
+
+
+    
+
+
+
+
