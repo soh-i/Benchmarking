@@ -9,6 +9,8 @@ use IO::File;
 my $file = shift or die _help();
 my $N    = shift || 1000; # Set sampling count, default value is 1000
 
+my $VERSION = qq/0.0.1/;
+
 my $fh = IO::File->new($file) or die;
 my $selected = [];
 my $count = 0;
@@ -28,7 +30,7 @@ sub _help {
     return <<EOF;
 
 Program: Generating the random sampling dataset from given dataset
-Version: 0.0.1
+Version: $VERSION
 
 Usage:
 perl $0 <data.csv> <Sampling count>  (default:1000)
