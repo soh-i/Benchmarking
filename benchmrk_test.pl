@@ -21,7 +21,7 @@ my %opts = ();
 my $help = undef;
 GetOptions(
            \%opts,
-           'help|h' => \$help,
+           'help|h' => \$help, 
            'answer_dir=s',
            'predicted_dir=s',
           ) or die _usage();
@@ -39,12 +39,12 @@ if (!$opts{answer_dir} || !$opts{predicted_dir}) {
 Readonly my $ANSDATA_SUFFIX        => '.csv'; # eg. hg19.csv
 Readonly my $PREDICTED_DATA_SUFFIX => '.csv'; # eg. excel.csv
 
-# Collect answer data set from given dir
+# Collect answer data set from given directory
 my $adh = IO::Dir->new($opts{answer_dir}) or die "Error: Can not find file:$!";
 my @ans_files = ();
 while (my $ans_file = $adh->read()){
     next unless $ans_file =~ m/$ANSDATA_SUFFIX$/;
-    my $abs_ans_path = Cwd::abs_path($opts{answer_dir})."/$ans_file";
+    my $abs_ans_path = Cwd::abs_path($opts{answer_dir}).'/'.$ans_file;
     push @ans_files, $abs_ans_path;
 }
 $adh->close();
@@ -64,7 +64,7 @@ for my $ansfile (@ans_files) {
     # collection of predicted data
     while (my $pred_file = $pdh->read()){
         next unless $pred_file =~ m/$PREDICTED_DATA_SUFFIX$/;
-        my $abs_pred_path = Cwd::abs_path($opts{predicted_dir})."/$pred_file";
+        my $abs_pred_path = Cwd::abs_path($opts{predicted_dir}).'/'.$pred_file;
         my $collected_predict = collect_data(file => $abs_pred_path);
         
         # Calculate for the metrics
@@ -75,8 +75,8 @@ for my $ansfile (@ans_files) {
                                            );
         print $result, "\t";
         print basename($pred_file, '.csv'), "\t";
-        print basename($ansfile, '.csv'), "\t";
-        print scalar @{$collected_answer}, "\t";
+        print basename($ansfile,   '.csv'), "\t";
+        print scalar @{$collected_answer},  "\t";
         print scalar @{$collected_predict}, "\n";
     }
     $pdh->close();
@@ -98,7 +98,7 @@ sub collect_data {
         next if $data_entory =~ m/^track/;
 
         # Split properly
-        my ($chr, $pos)  = (split /\,/, $data_entory)[0,1];
+        my ($chr, $pos)  = (split /\,/, $data_entory)[0, 1];
         
         $chr =~ s/^chr// if $chr =~ m/^chr/;
         $pos =~ s/\,//g  if $pos =~ m/\,/;  
@@ -110,22 +110,24 @@ sub collect_data {
 
 sub _usage {
     return <<EOF;
-$0:
-Benchmarking test for the RNA editing sites detection methods based on RNA-seq data,
-using precision and recall.
+
+Program: Benchmarking test for the RNA editing sites detection methods based on RNA-seq data using precision and recall.
+
+Version: 0.0.1
 
 Usage:
     perl $0 --answer_dir ./DARNED_DIR --predicted ./EditingSite_collection/
-    --answer_dir    [required]
-    --predicted_dir [required]
+    --answer_dir    [Required]
+    --predicted_dir [Required]
 
 Options:
     --help Show help message
 
-*** Input data ***
-[0] chr1 [1] 1338121
-[0] YHet, [1] 12,009
-[0] 1, [1] 9318212
+
+### Input sample (csv) ###
+chr1,1338121
+YHet,12,009
+1,9318212
 
 EOF
 }
