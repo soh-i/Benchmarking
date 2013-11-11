@@ -4,8 +4,8 @@ Benchmarking
 Benchmarking test for RNA editing detection methods based on RNA-seq data
 
 ## example
-`get_measure(predicted=>array_ref, answerset=>array_ref, flag=>'all')`    
-flag => precison, recall, all
+* `get_measure(predicted=>array_ref, answerset=>array_ref, flag=>'all')`    
+* flag => precison, recall, all
 
 ```perl
 # Calculate for the metrics
