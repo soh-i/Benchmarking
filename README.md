@@ -11,4 +11,5 @@ my $result = Benchmark::get_measure(
                                     predicted => $collected_predict,
                                     answerset => $collected_answer
                                    );
+#=> 0.99\t0.393
 ```                                           
